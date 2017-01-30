@@ -585,7 +585,7 @@ namespace Microsoft.Azure.Devices.Client
         {
 #if NETMF
             inputStream.Position = 0;
-            byte[] buffer = new byte[inputStream.Length];
+            byte[] buffer = new byte[(int)inputStream.Length];
 
             inputStream.Read(buffer, 0, (int)inputStream.Length);
 
