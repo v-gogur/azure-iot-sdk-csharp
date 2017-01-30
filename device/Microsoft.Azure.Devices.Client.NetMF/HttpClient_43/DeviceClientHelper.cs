@@ -11,9 +11,6 @@ namespace Microsoft.Azure.Devices.Client
     /// </summary>
     internal abstract class DeviceClientHelper
     {
-        bool openCalled;
-        bool closeCalled;
-
         protected DeviceClientHelper()
         {
             this.ThisLock = new object();
