@@ -151,7 +151,6 @@
     <Compile Include="$(DeviceClientDir)\UWPHelpers.cs" />
     <Compile Include="$(DeviceClientDir)\UWPResources.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Resources.resw" />
@@ -161,30 +160,29 @@
     <DotNettyDirRoot>E:\git_projects\arturl-dotnetty\src</DotNettyDirRoot>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DotNetty.Common">
-      <HintPath>$(DotNettyDirRoot)\DotNetty.Common\bin\$(Configuration)\netstandard1.3\DotNetty.Common.dll</HintPath>
+    <Reference Include="DotNetty.Buffers">
+      <HintPath>..\..\..\DotNetty\src\DotNetty.Buffers\bin\Debug\netstandard1.3\DotNetty.Buffers.dll</HintPath>
     </Reference>
     <Reference Include="DotNetty.Codecs">
-      <HintPath>$(DotNettyDirRoot)\DotNetty.Codecs\bin\$(Configuration)\netstandard1.3\DotNetty.Codecs.dll</HintPath>
+      <HintPath>..\..\..\DotNetty\src\DotNetty.Codecs\bin\Debug\netstandard1.3\DotNetty.Codecs.dll</HintPath>
     </Reference>
     <Reference Include="DotNetty.Codecs.Mqtt">
-      <HintPath>$(DotNettyDirRoot)\DotNetty.Codecs.Mqtt\bin\$(Configuration)\netstandard1.3\DotNetty.Codecs.Mqtt.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNetty.Buffers">
-      <HintPath>$(DotNettyDirRoot)\DotNetty.Buffers\bin\$(Configuration)\netstandard1.3\DotNetty.Buffers.dll</HintPath>
+      <HintPath>..\..\..\DotNetty\src\DotNetty.Codecs.Mqtt\bin\Debug\netstandard1.3\DotNetty.Codecs.Mqtt.dll</HintPath>
     </Reference>
     <Reference Include="DotNetty.Codecs">
       <HintPath>$(DotNettyDirRoot)\DotNetty.Codecs\bin\$(Configuration)\netstandard1.3\DotNetty.Codecs.dll</HintPath>
     </Reference>
-    <Reference Include="DotNetty.Transport">
-      <HintPath>$(DotNettyDirRoot)\DotNetty.Transport\bin\$(Configuration)\netstandard1.3\DotNetty.Transport.dll</HintPath>
+    <Reference Include="DotNetty.Common">
+      <HintPath>..\..\..\DotNetty\src\DotNetty.Common\bin\Debug\netstandard1.3\DotNetty.Common.dll</HintPath>
     </Reference>
     <Reference Include="DotNetty.Handlers">
-      <HintPath>$(DotNettyDirRoot)\DotNetty.Handlers\bin\$(Configuration)\netstandard1.3\DotNetty.Handlers.dll</HintPath>
+      <HintPath>..\..\..\DotNetty\src\DotNetty.Handlers\bin\Debug\netstandard1.3\DotNetty.Handlers.dll</HintPath>
     </Reference>
-    <Reference Include="DotNetty.Platform.UWP, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(DotNettyDirRoot)\DotNetty.Platform.UWP\bin\Debug\DotNetty.Platform.UWP.dll</HintPath>
+    <Reference Include="DotNetty.Platform.UWP">
+      <HintPath>..\..\..\DotNetty\src\DotNetty.Platform.UWP\bin\Debug\DotNetty.Platform.UWP.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetty.Transport">
+      <HintPath>..\..\..\DotNetty\src\DotNetty.Transport\bin\Debug\netstandard1.3\DotNetty.Transport.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

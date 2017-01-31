@@ -1,7 +1,8 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
-
 #define WIP_TWIN_MQTT
+
+using System.Diagnostics;
 
 namespace Microsoft.Azure.Devices.Client
 {
@@ -179,6 +180,8 @@ TODO: revisit DefaultDelegatingHandler - it seems redundant as long as we have t
 
         static IDeviceClientPipelineBuilder BuildPipeline()
         {
+            Debug.WriteLine("DeviceClient.BuildPipeline()");
+
             var transporthandlerFactory = new TransportHandlerFactory();
             IDeviceClientPipelineBuilder pipelineBuilder = new DeviceClientPipelineBuilder()
                 .With(ctx => new GateKeeperDelegatingHandler(ctx))
@@ -673,8 +676,10 @@ TODO: revisit DefaultDelegatingHandler - it seems redundant as long as we have t
 
         Task ApplyTimeout(Func<CancellationToken, Task> operation)
         {
+            Debug.WriteLine("DeviceClient.ApplyTimeout()");
             if (OperationTimeoutInMilliseconds == 0)
             {
+                Debug.WriteLine("DeviceClient.ApplyTimeout - 1");
                 return operation(CancellationToken.None)
                     .WithTimeout(TimeSpan.MaxValue, () => Resources.OperationTimeoutExpired, CancellationToken.None);
             }
@@ -964,15 +969,23 @@ TODO: revisit DefaultDelegatingHandler - it seems redundant as long as we have t
         /// <param name="userContext">Context object that will be passed into callback</param>
         public Task SetDesiredPropertyUpdateCallback(DesiredPropertyUpdateCallback callback, object userContext)
         {
+            Debug.WriteLine("[" + Environment.CurrentManagedThreadId + "] DeviceClient.SetDesiredPropertyUpdateCallback()");
             return ApplyTimeout(async operationTimeoutCancellationToken =>
             {
+                Debug.WriteLine("[" + Environment.CurrentManagedThreadId + "] SetDesiredPropertyUpdateCallback()-Lambda");
+
                 // Codes_SRS_DEVICECLIENT_18_001: `SetDesiredPropertyUpdateCallback` shall call the transport to register for PATCHes on it's first call.
                 if (!this.patchSubscribedWithService)
                 {
+                    Debug.WriteLine("[" + Environment.CurrentManagedThreadId + "] SetDesiredPropertyUpdateCallback()-Lambda- setting InnerHandler.TwinUpdateHandler to DeviceClient.OnReportedStatePatchReceived().");
                     this.InnerHandler.TwinUpdateHandler = this.OnReportedStatePatchReceived;
+
+                    Debug.WriteLine("[" + Environment.CurrentManagedThreadId + "] SetDesiredPropertyUpdateCallback()-Lambda- calling DeviceClient.InnerHandler.EnableTwinPatchAsync()");
                     await this.InnerHandler.EnableTwinPatchAsync(operationTimeoutCancellationToken);
                     patchSubscribedWithService = true;
                 }
+
+                Debug.WriteLine("[" + Environment.CurrentManagedThreadId + "] SetDesiredPropertyUpdateCallback()-Lambda- saving callback and context.");
 
                 // Codes_SRS_DEVICECLIENT_18_016: `SetDesiredPropertyUpdateCallback` shall keep track of the `callback` for future use. 
                 this.desiredPropertyUpdateCallback = callback;

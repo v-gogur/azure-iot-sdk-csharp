@@ -27,30 +27,49 @@ namespace Microsoft.Azure.Devices.Client.Transport
         public ProtocolRoutingDelegatingHandler(IPipelineContext context):
             base(context)
         {
-            
+            Handler_Type = "ProtocolRoutingDelegatingHandler";
+            Debug.WriteLine("[" + Environment.CurrentManagedThreadId + "][" + Handler_Id + "][" + Handler_Type + "] .ctor ProtocolRoutingDelegatingHandler");
         }
 
         public override async Task OpenAsync(bool explicitOpen, CancellationToken cancellationToken)
         {
+            Debug.WriteLine("[" + Environment.CurrentManagedThreadId + "][" + Handler_Id + "] ProtocolRoutingDelegatingHandler.OpenAsync()");
             await this.TryOpenPrioritizedTransportsAsync(explicitOpen, cancellationToken);
         }
 
         async Task TryOpenPrioritizedTransportsAsync(bool explicitOpen, CancellationToken cancellationToken)
         {
+            Debug.WriteLine("[" + Environment.CurrentManagedThreadId + "][" + Handler_Id + "] ProtocolRoutingDelegatingHandler.TryOpenPrioritizedTransportsAsync() - 1");
+
             Exception lastException = null;
             // Concrete Device Client creation was deferred. Use prioritized list of transports.
             foreach (ITransportSettings transportSetting in this.Context.Get<ITransportSettings[]>())
             {
+                Debug.WriteLine("[" + Environment.CurrentManagedThreadId + "][" + Handler_Id + "] ProtocolRoutingDelegatingHandler.TryOpenPrioritizedTransportsAsync - 2");
+
                 if (cancellationToken.IsCancellationRequested)
                 {
+
+                    Debug.WriteLine("[" + Environment.CurrentManagedThreadId + "][" + Handler_Id + "] ProtocolRoutingDelegatingHandler.TryOpenPrioritizedTransportsAsync - 3 --> Cancelled!");
+
                     return;
                 }
 
+                Debug.WriteLine("[" + Environment.CurrentManagedThreadId + "][" + Handler_Id + "] ProtocolRoutingDelegatingHandler.TryOpenPrioritizedTransportsAsync - 3 --> NOT Cancelled!");
+
                 try
                 {
-                    this.Context.Set(transportSetting);
-                    this.InnerHandler = this.ContinuationFactory(this.Context);
+                    Debug.WriteLine("[" + Environment.CurrentManagedThreadId + "][" + Handler_Id + "] ProtocolRoutingDelegatingHandler.TryOpenPrioritizedTransportsAsync - 4 --> Context.Set()");
 
+                    this.Context.Set(transportSetting);
+
+                    if (this.InnerHandler == null)
+                    {
+                        Debug.WriteLine("[" + Environment.CurrentManagedThreadId + "][" + Handler_Id + "] ProtocolRoutingDelegatingHandler.TryOpenPrioritizedTransportsAsync - 5 --> InnerHandler = ... ");
+                        this.InnerHandler = this.ContinuationFactory(this.Context);
+                    }
+
+                    Debug.WriteLine("[" + Environment.CurrentManagedThreadId + "][" + Handler_Id + "] ProtocolRoutingDelegatingHandler.TryOpenPrioritizedTransportsAsync - 6 --> OpenAsync()");
                     // Try to open a connection with this transport
                     await base.OpenAsync(explicitOpen, cancellationToken);
                 }
@@ -98,6 +117,7 @@ namespace Microsoft.Azure.Devices.Client.Transport
                     continue;
                 }
 
+                Debug.WriteLine("[" + Environment.CurrentManagedThreadId + "][" + Handler_Id + "] ProtocolRoutingDelegatingHandler.TryOpenPrioritizedTransportsAsync - 7 --> returning...");
                 return;
             }
 

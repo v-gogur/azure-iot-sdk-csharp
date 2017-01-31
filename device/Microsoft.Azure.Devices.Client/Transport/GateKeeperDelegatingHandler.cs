@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+using System.Diagnostics;
 
 namespace Microsoft.Azure.Devices.Client.Transport
 {
@@ -23,6 +24,9 @@ namespace Microsoft.Azure.Devices.Client.Transport
         public GateKeeperDelegatingHandler(IPipelineContext context)
             : base(context)
         {
+            Handler_Type = "GateKeeperDelegatingHandler";
+            Debug.WriteLine("[" + Environment.CurrentManagedThreadId + "][" + Handler_Id + "] .ctor GateKeeperDelegatingHandler");
+
             this.thisLock = new object();
             this.openTaskCompletionSource = new TaskCompletionSource<object>(this);
         }
@@ -32,6 +36,7 @@ namespace Microsoft.Azure.Devices.Client.Transport
         /// </summary>
         public Task OpenAsync(CancellationToken cancellationToken)
         {
+            Debug.WriteLine("[" + Environment.CurrentManagedThreadId + "][" + Handler_Id + "] GateKeeperDelegatingHandler.OpenAsync()");
             return this.EnsureOpenedAsync(true, cancellationToken);
         }
 
@@ -70,10 +75,13 @@ namespace Microsoft.Azure.Devices.Client.Transport
 
         public override async Task EnableTwinPatchAsync(CancellationToken cancellationToken)
         {
+            Debug.WriteLine("[" + Environment.CurrentManagedThreadId + "][" + Handler_Id + "] GateKeeperDelegatingHandler.EnableTwinPatchAsync() - 1");
             await this.EnsureOpenedAsync(false, cancellationToken);
+            Debug.WriteLine("[" + Environment.CurrentManagedThreadId + "][" + Handler_Id + "] GateKeeperDelegatingHandler.EnableTwinPatchAsync() - 2");
             await base.EnableTwinPatchAsync(cancellationToken);
+            Debug.WriteLine("[" + Environment.CurrentManagedThreadId + "][" + Handler_Id + "] GateKeeperDelegatingHandler.EnableTwinPatchAsync() - 3");
         }
-        
+
         public override async Task<Twin> SendTwinGetAsync(CancellationToken cancellationToken)
         {
             await this.EnsureOpenedAsync(false, cancellationToken);
@@ -180,6 +188,7 @@ namespace Microsoft.Azure.Devices.Client.Transport
 
         Task EnsureOpenedAsync(bool explicitOpen, CancellationToken cancellationToken)
         {
+            Debug.WriteLine("[" + Environment.CurrentManagedThreadId + "][" + Handler_Id + "] GateKeeperDelegatingHandler.EnsureOpenedAsync()");
             lock (this.thisLock)
             {
                 if (this.closed)
@@ -221,6 +230,8 @@ namespace Microsoft.Azure.Devices.Client.Transport
                 openTask = TaskHelpers.CompletedTask;
             }
 
+            Debug.WriteLine("[" + Environment.CurrentManagedThreadId + "][" + Handler_Id + "] GateKeeperDelegatingHandler.EnsureOpenedAsync() - 1" + (needOpen ? "need to open" : "don't need to open"));
+
             if (needOpen)
             {
                 try
@@ -228,9 +239,14 @@ namespace Microsoft.Azure.Devices.Client.Transport
                     base.OpenAsync(explicitOpen, cancellationToken).ContinueWith(
                         t =>
                         {
+
+                            Debug.WriteLine("[" + Environment.CurrentManagedThreadId + "][" + Handler_Id + "] GateKeeperDelegatingHandler.EnsureOpenedAsync() - Lambda 1 - Handler_Id id = " + Handler_Id);
+
                             TaskCompletionSource<object> localOpenTaskCompletionSource;
                             lock (this.thisLock)
                             {
+                                Debug.WriteLine("[" + Environment.CurrentManagedThreadId + "][" + Handler_Id + "] GateKeeperDelegatingHandler.EnsureOpenedAsync() - Lambda 2 - Handler_Id id = " + Handler_Id);
+
                                 localOpenTaskCompletionSource = this.openTaskCompletionSource;
                                 if (!t.IsFaulted && !t.IsCanceled)
                                 {

@@ -84,6 +84,8 @@ namespace Microsoft.Azure.Devices.Client.Transport
         public RetryDelegatingHandler(IPipelineContext context)
             : base(context)
         {
+            Debug.WriteLine("RetryDelegatingHandler id = " + Handler_Id);
+
             this.retryPolicy = new RetryPolicy(new IotHubTransientErrorIgnoreStrategy(), new IotHubRuntimeOperationRetryStrategy(RetryCount));
         }
 

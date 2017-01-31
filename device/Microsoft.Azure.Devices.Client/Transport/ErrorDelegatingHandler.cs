@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+using System.Diagnostics;
 
 namespace Microsoft.Azure.Devices.Client.Transport
 {
@@ -46,19 +47,33 @@ namespace Microsoft.Azure.Devices.Client.Transport
         public ErrorDelegatingHandler(IPipelineContext context)
             : base(context)
         {
+            Handler_Type = "ErrorDelegatingHandler";
+            Debug.WriteLine("[" + Environment.CurrentManagedThreadId + "][" + Handler_Id + "][" + Handler_Type + "] .ctor ErrorDelegatingHandler");
         }
 
         public override async Task OpenAsync(bool explicitOpen, CancellationToken cancellationToken)
         {
+            Debug.WriteLine("[" + Environment.CurrentManagedThreadId + "][" + Handler_Id + "][" + Handler_Type + "] OpenAsync()");
+
             TaskCompletionSource<int> openCompletionBeforeOperationStarted = Volatile.Read(ref this.openCompletion);
             if (openCompletionBeforeOperationStarted == null)
             {
+                Debug.WriteLine("[" + Environment.CurrentManagedThreadId + "][" + Handler_Id + "][" + Handler_Type + "] OpenAsync() - openCompletionBeforeOperationStarted == null");
+
                 openCompletionBeforeOperationStarted = new TaskCompletionSource<int>();
                 TaskCompletionSource<int> currentOpenPromise;
                 if ((currentOpenPromise = Interlocked.CompareExchange(ref this.openCompletion, openCompletionBeforeOperationStarted, null)) == null)
                 {
-                    IDelegatingHandler handlerBeforeOperationStarted = this.ContinuationFactory(Context);
-                    this.InnerHandler = handlerBeforeOperationStarted;
+                    IDelegatingHandler handlerBeforeOperationStarted = null;
+                    if (this.InnerHandler == null)
+                    {
+                        handlerBeforeOperationStarted = this.ContinuationFactory(Context);
+                        this.InnerHandler = handlerBeforeOperationStarted;
+                    }
+                    else
+                    {
+                        handlerBeforeOperationStarted = this.InnerHandler;
+                    }
                     try
                     {
                         await this.ExecuteWithErrorHandlingAsync(() => base.OpenAsync(explicitOpen, cancellationToken), false, cancellationToken);

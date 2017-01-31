@@ -4,6 +4,7 @@
 namespace Microsoft.Azure.Devices.Client.Transport
 {
     using System;
+    using System.Diagnostics;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -14,6 +15,9 @@ namespace Microsoft.Azure.Devices.Client.Transport
         protected TransportHandler(IPipelineContext context, ITransportSettings transportSettings)
             : base(context)
         {
+            Handler_Type = "TransportHandler";
+            Debug.WriteLine("[" + Environment.CurrentManagedThreadId + "][" + Handler_Id + "][" + Handler_Type + "] .ctor TransportHandler");
+
             this.TransportSettings = transportSettings;
         }
 
