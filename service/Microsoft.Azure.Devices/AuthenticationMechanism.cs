@@ -4,6 +4,7 @@
 namespace Microsoft.Azure.Devices
 {
     using Newtonsoft.Json;
+    using System.ComponentModel;
 
     /// <summary>
     /// Used to specify the authentication mechanism used by a device.
@@ -30,5 +31,9 @@ namespace Microsoft.Azure.Devices
         /// </summary>
         [JsonProperty(PropertyName = "x509Thumbprint")]
         public X509Thumbprint X509Thumbprint { get; set; }
+
+        [DefaultValue(AuthenticationType.Sas)]
+        [JsonProperty(PropertyName = "type", DefaultValueHandling = DefaultValueHandling.Populate)]
+        public AuthenticationType Type { get; set; }
     }
 }
