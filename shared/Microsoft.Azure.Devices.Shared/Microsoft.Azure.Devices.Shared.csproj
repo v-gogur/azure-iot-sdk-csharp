@@ -59,12 +59,6 @@
     <Compile Include="IETagHolder.cs" />
     <Compile Include="Metadata.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Twin.cs" />
-    <Compile Include="TwinCollection.cs" />
-    <Compile Include="TwinCollectionJsonConverter.cs" />
-    <Compile Include="TwinCollectionValue.cs" />
-    <Compile Include="TwinJsonConverter.cs" />
-    <Compile Include="TwinProperties.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
